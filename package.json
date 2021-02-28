@@ -1,12 +1,12 @@
 {
-  "name": "discord-bot",
+  "name": "yeti-discord-bot",
   "version": "1.0.0",
-  "description": "Discord bot for SitePoint",
+  "description": "Discord bot for eXF Gaming Server",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Michiel Mulders",
+  "author": "Dayne de Kock",
   "license": "ISC",
   "dependencies": {
     "discord.js": "^11.5.1",
