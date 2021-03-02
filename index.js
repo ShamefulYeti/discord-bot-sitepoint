@@ -4,6 +4,19 @@ const bot = new Discord.Client();
 const TOKEN = process.env.TOKEN;
 const { exec } = require("child_process");
 
+var dockerCLI = require('docker-cli-js');
+var DockerOptions = dockerCLI.Options;
+var Docker = dockerCLI.Docker;
+
+   var options = new DockerOptions(
+    /* machinename */ null,
+    /* currentWorkingDirectory */ null,
+    /* echo */ true,
+   );
+
+   var docker = new Docker(options);
+
+
 bot.login(TOKEN);
 
 bot.on('ready', () => {
@@ -34,12 +47,22 @@ bot.on("message", function(message) {
 
 
   } else if (command === "status") {
+
+    console.log(`Status Request from: ${message.author.username}`);
     const allowedContainers = ["valheim-server"];
-    const container = args[0];
+    const container = (args[0]) ? args[0] : "valheim-server";
+    const frmtCodeBlock = "```";
+
     if (allowedContainers.includes(container)) {
-      exec(`docker ps -a -f "name=${container}" --format "{{.ID}} - {{.Names}} : {{.Status}}"`,  (error, stdout, stderr) => {
-        message.reply(`Container Status: \n ${stdout}`);
+      docker.command(`ps -a -f "name=${container}" --format "{{.ID}} - {{.Names}} : {{.Status}}"`).then((status) => {
+
+        docker.command(`logs -n 5 -f ${container}`).then((data) => {
+          message.reply(`Current status & logs from the server.\n**Status:** ${status.raw}\n${frmtCodeBlock}${data.raw}${frmtCodeBlock}`);
+        });
+      }).catch((error) => {
+        message.reply(`Error: ${error}\n`);
       });
+
     }
   } else if (command ==="stop") {
     // console.log(args);
